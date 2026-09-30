@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "airflow": {
+      "command": "uvx",
+      "args": ["astro-airflow-mcp@0.9.1", "--transport", "stdio"],
+      "env": {
+        "AIRFLOW_API_URL": "http://localhost:8080",
+        "AIRFLOW_USERNAME": "${MCP_VIEWER_USER:-mcp_viewer}",
+        "AIRFLOW_PASSWORD": "${MCP_VIEWER_PASSWORD:-mcp_viewer}",
+        "AF_READ_ONLY": "true",
+        "AF_TELEMETRY_DISABLED": "true"
+      }
+    }
+  }
+}

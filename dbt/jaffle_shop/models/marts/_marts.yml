@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: orders
+    description: One row per order with the amount paid through each payment method.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: amount
+        description: Total paid for the order, across all payment methods.
+        data_tests: [not_null]
+
+  - name: customers
+    description: One row per customer with order history and lifetime value (returns excluded).
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+
+  - name: daily_revenue
+    description: Revenue and order count per day, excluding returned orders.
+    columns:
+      - name: order_day
+        data_tests: [unique, not_null]
