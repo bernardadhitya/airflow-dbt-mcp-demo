@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: customer_monthly_cashflow
+    description: >
+      One row per retail customer per month: money in, money out, net cashflow, and the net amount
+      moved into savings pockets. Moves between a customer's own accounts don't count as in/out.
+    columns:
+      - name: month
+        data_tests: [not_null]
+      - name: cif
+        data_tests: [not_null]
+      - name: savings_rate_pct
+        description: Net amount moved into savings pockets as a percentage of money in.
+
+  - name: spending_by_category
+    description: >
+      One row per retail customer, month and merchant category, with the category's share of
+      that customer's monthly spend. Only successful payments and bill payments count.
+    columns:
+      - name: month
+        data_tests: [not_null]
+      - name: cif
+        data_tests: [not_null]
+      - name: merchant_category
+        data_tests: [not_null]
+
+  - name: merchant_performance
+    description: >
+      One row per merchant per month: transactions, unique customers, total amount, average ticket
+      size and busiest hour (WIB). Includes SME customers who accept QRIS payments.
+    columns:
+      - name: month
+        data_tests: [not_null]
+      - name: merchant_cif
+        data_tests: [not_null]
+
+  - name: p2p_transfer_network
+    description: One row per sender/receiver pair of retail customers who transferred money to each other.
+    columns:
+      - name: sender_cif
+        data_tests: [not_null]
+      - name: receiver_cif
+        data_tests: [not_null]
+
+  - name: high_value_transactions
+    description: >
+      Outgoing transactions of at least Rp 1,000,000 and at least 5x the customer's median outgoing
+      amount. Flagged HIGH_VALUE_AT_NIGHT when made between 00:00 and 04:59 WIB.
+    columns:
+      - name: transaction_id
+        data_tests: [unique, not_null]
+      - name: alert_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [HIGH_VALUE, HIGH_VALUE_AT_NIGHT]

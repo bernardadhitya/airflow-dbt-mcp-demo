@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: silver_customer
+    description: >
+      Cleaned customers, incremental and partitioned by business_date (Jakarta date of the last change).
+      Merchants and companies are customers too; use customer_type to tell them apart.
+    columns:
+      - name: business_date
+        data_tests: [not_null]
+      - name: cif
+        data_tests: [not_null]
+      - name: customer_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [INDIVIDUAL, MERCHANT, CORPORATE]
+
+  - name: silver_account
+    description: Cleaned accounts, incremental and partitioned by business_date (Jakarta date of the last change).
+    columns:
+      - name: business_date
+        data_tests: [not_null]
+      - name: account_number
+        data_tests: [not_null]
+      - name: account_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [MAIN, POCKET_SAVINGS, POCKET_SPENDING, BUSINESS, MERCHANT_SETTLEMENT, CORPORATE_OPERATING]
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [ACTIVE, CLOSED, DORMANT]
+
+  - name: silver_transaction
+    description: Cleaned transactions, incremental and partitioned by business_date (Jakarta date of the transaction).
+    columns:
+      - name: business_date
+        data_tests: [not_null]
+      - name: transaction_id
+        data_tests: [unique, not_null]
+      - name: is_own_account_transfer
+        description: True when money moves between two accounts of the same customer, e.g. into a savings pocket.
+      - name: transaction_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [PAYMENT, BILL_PAYMENT, P2P_TRANSFER, OWN_ACCOUNT_TRANSFER, PAYROLL, MERCHANT_SETTLEMENT]
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [SUCCESS, FAILED]

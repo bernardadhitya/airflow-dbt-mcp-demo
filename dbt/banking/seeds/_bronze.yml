@@ -1,0 +1,28 @@
+version: 2
+
+seeds:
+  - name: bronze_customer
+    description: >
+      Core-banking customer (CIF) extract. Six retail personas plus the merchants and companies
+      they transact with, which are onboarded as business customers with settlement accounts.
+    columns:
+      - name: cif
+        description: Customer Information File number, the bank-wide customer identifier.
+        data_tests: [unique, not_null]
+
+  - name: bronze_account
+    description: Account extract. A customer has a MAIN account plus savings/spending pockets (kantong).
+    columns:
+      - name: account_number
+        data_tests: [unique, not_null]
+      - name: cif
+        data_tests: [not_null]
+
+  - name: bronze_transaction
+    description: Transaction extract, 1 Aug to 29 Sep 2026. Timestamps are Asia/Jakarta (WIB).
+    columns:
+      - name: transaction_id
+        data_tests: [unique, not_null]
+      - name: amount
+        description: Transaction amount in IDR, always positive. Direction comes from source vs beneficiary.
+        data_tests: [not_null]

@@ -1,0 +1,66 @@
+name: banking
+version: "1.0.0"
+profile: banking
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+vars:
+  # How many business dates before the latest loaded one each silver run re-processes,
+  # to pick up late-arriving or corrected records.
+  silver_lookback_days: 3
+
+seeds:
+  banking:
+    +schema: bronze
+    bronze_customer:
+      +alias: customer
+      +column_types:
+        cif: varchar(20)
+        full_name: varchar(100)
+        customer_type: varchar(20)
+        segment: varchar(20)
+        merchant_category: varchar(30)
+        date_of_birth: date
+        gender: varchar(1)
+        city: varchar(50)
+        occupation: varchar(50)
+        kyc_risk_level: varchar(10)
+        onboarded_at: timestamptz
+        updated_at: timestamptz
+    bronze_account:
+      +alias: account
+      +column_types:
+        account_number: varchar(20)
+        cif: varchar(20)
+        account_type: varchar(30)
+        account_name: varchar(100)
+        currency: varchar(3)
+        status: varchar(10)
+        opened_at: timestamptz
+        updated_at: timestamptz
+    bronze_transaction:
+      +alias: transaction
+      +column_types:
+        transaction_id: varchar(30)
+        transaction_ts: timestamptz
+        source_cif: varchar(20)
+        source_account: varchar(20)
+        beneficiary_cif: varchar(20)
+        beneficiary_account: varchar(20)
+        amount: numeric(18, 2)
+        currency: varchar(3)
+        channel: varchar(30)
+        transaction_type: varchar(30)
+        description: varchar(200)
+        status: varchar(10)
+
+models:
+  banking:
+    silver:
+      +schema: silver
+      +materialized: incremental
+    gold:
+      +schema: gold
+      +materialized: table
